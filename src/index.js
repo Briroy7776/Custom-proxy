@@ -21,17 +21,18 @@ Object.assign(wisp.options, {
 });
 
 const fastify = Fastify({
-	serverFactory: (handler) => {
-		return createServer()
-			.on("request", (req, res) => {
-				res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-				res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-				handler(req, res);
-			.on("upgrade", (req, socket, head) => {
-    wisp.routeRequest(req, socket, head);
+    serverFactory: (handler) => {
+        return createServer()
+            .on("request", (req, res) => {
+                res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+                res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+                handler(req, res);
+            })
+            .on("upgrade", (req, socket, head) => {
+                wisp.routeRequest(req, socket, head);
+            });
+    },
 });
-});
-
 fastify.register(fastifyStatic, {
 	root: publicPath,
 	decorateReply: true,
